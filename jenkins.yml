@@ -1,0 +1,25 @@
+---
+- hosts: dev
+  user: ansible
+  become: yes
+  connection: ssh
+
+  tasks: 
+   - name: installing java
+     action: yum name=java state=present
+
+   - name: get the jenkins links
+     get_url:
+       url: https://pkg.jenkins.io/redhat/jenkins.repo
+       dest: /etc/yum.repos.d/jenkins.repo
+
+   - name: get the key
+     ansible.builtin.rpm_key:
+       key: https://pkg.jenkins.io/redhat/jenkins.io-2023.key
+       state: present
+
+   - name: install jenkisn
+     action: yum name=jenkins state=present
+
+   - name: start the jnenkins
+     service: name=jenkins state=restarted
